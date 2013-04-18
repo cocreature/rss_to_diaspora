@@ -4,6 +4,7 @@ import re
 import configparser
 
 holarse_feed = 'http://www.holarse-linuxgaming.de/rss.xml'
+tags = ['#holarse', '#linuxgames']
 
 config = configparser.ConfigParser()
 config.read('config')
@@ -24,5 +25,5 @@ class HolarseBot(RSSBot):
         return super(HolarseBot, self).html_to_markdown(text)
 
 if __name__ == '__main__':
-    holarsebot = HolarseBot(holarse_feed, pod, user, password)
+    holarsebot = HolarseBot(holarse_feed, tags, pod, user, password)
     holarsebot.start()

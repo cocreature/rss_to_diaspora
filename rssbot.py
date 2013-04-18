@@ -1,5 +1,6 @@
 import re
 from threading import Timer
+from xml.etree import ElementTree
 
 import feedparser
 import diaspy
@@ -12,7 +13,7 @@ class RSSBot(object):
     def rss_to_markdown(self, item):
         title = "## [{0}]({1})\n".format(item.title, item.link)
         description = "{0}\n".format(self.html_to_markdown(item.description))
-        tags = '\n#holarse #linuxgames'
+        tags = "\n{0}".format(' '.join(self.tags))
         markdown = title + description + tags
         return markdown
 
@@ -44,6 +45,15 @@ class RSSBot(object):
                       text)
         text = re.sub(r'<h[3456]>(.*?)</h[3456]>',
                       r'### \1',
+                      text)
+
+        text = re.sub(r'<img src="(.*?)" title="(.*?)" alt="(.*?)" ?/?>',
+                      r'![\3](\1 "\2")',
+                      text)
+
+        # replace imgages
+        text = re.sub(r'<img(.*?)>',
+                      self.replace_images,
                       text)
 
         # remove additional newlines
@@ -85,16 +95,27 @@ class RSSBot(object):
                     .format(match_obj.group(2), match_obj.group(1)))
         return "[{0}]({1})".format(match_obj.group(2), match_obj.group(1))
 
+    def replace_images(self, match_obj):
+        image_tag = match_obj.group(0)
+        if image_tag[-2] != '/':
+            image_tag = "{0}/>".format(image_tag[:-1])
+        tag = ElementTree.XML(image_tag)
+        return '![{0}]({1} "{2}"'.format(tag.get('alt', ''),
+                                         tag.get('src', ''),
+                                         tag.get('title', ''))
+
     def start(self):
         self.check_for_new_feed_item()
 
     def __init__(self,
                  feed_url,
+                 tags,
                  pod_url,
                  username,
                  password,
                  file_location='feedid'):
         self.feed_url = feed_url
+        self.tags = tags
         self.pod_url = pod_url
         self.username = username
         self.password = password
