@@ -100,7 +100,7 @@ class RSSBot(object):
         if image_tag[-2] != '/':
             image_tag = "{0}/>".format(image_tag[:-1])
         tag = ElementTree.XML(image_tag)
-        return '![{0}]({1} "{2}"'.format(tag.get('alt', ''),
+        return '![{0}]({1} "{2}")'.format(tag.get('alt', ''),
                                          tag.get('src', ''),
                                          tag.get('title', ''))
 
