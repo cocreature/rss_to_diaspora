@@ -47,10 +47,6 @@ class RSSBot(object):
                       r'### \1',
                       text)
 
-        text = re.sub(r'<img src="(.*?)" title="(.*?)" alt="(.*?)" ?/?>',
-                      r'![\3](\1 "\2")',
-                      text)
-
         # replace imgages
         text = re.sub(r'<img(.*?)>',
                       self.replace_images,
@@ -90,10 +86,8 @@ class RSSBot(object):
         Timer(60.0, self.check_for_new_feed_item).start()
 
     def replace_links(self, match_obj):
-        if match_obj.group(1)[0] == '/':
-            return ("[{0}](http://www.holarse-linuxgaming.de{1})"
-                    .format(match_obj.group(2), match_obj.group(1)))
-        return "[{0}]({1})".format(match_obj.group(2), match_obj.group(1))
+        tag = ElementTree.XML(match_obj.group(0))
+        return "[{0}]({1})".format(tag.text, tag.get('href'))
 
     def replace_images(self, match_obj):
         image_tag = match_obj.group(0)
