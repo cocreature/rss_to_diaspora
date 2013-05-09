@@ -74,7 +74,13 @@ class RSSBot(object):
         try:
             with open(self.file_location, 'r') as f:
                 old_id = f.read()
-                if feed.entries[0].id != old_id:
+                try:
+                    new_id = feed.entries[0].id
+                except IndexError:
+                    print("The feed doesn't contain any entries.")
+                    Timer(60.0, self.check_for_new_feed_item).start()
+                    return
+                if new_id != old_id:
                     self.post_entry(feed.entries[0])
                     f.close()
                     with open(self.file_location, 'w') as fw:
@@ -95,8 +101,8 @@ class RSSBot(object):
             image_tag = "{0}/>".format(image_tag[:-1])
         tag = ElementTree.XML(image_tag)
         return '![{0}]({1} "{2}")'.format(tag.get('alt', ''),
-                                         tag.get('src', ''),
-                                         tag.get('title', ''))
+                                          tag.get('src', ''),
+                                          tag.get('title', ''))
 
     def start(self):
         self.check_for_new_feed_item()
