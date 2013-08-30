@@ -52,6 +52,14 @@ class RSSBot(object):
                       self.replace_images,
                       text)
 
+        # replace listings
+        text = re.sub(r'<ul>(.*?)</ul>',
+                      r'\1',
+                      text)
+        text = re.sub(r'<li>(.*?</li>',
+                      r'* \1',
+                      text)
+
         # remove additional newlines
         text = text.strip()
         return text
