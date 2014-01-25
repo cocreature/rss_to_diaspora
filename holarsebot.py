@@ -4,7 +4,7 @@ import re
 import configparser
 
 holarse_feed = 'http://www.holarse-linuxgaming.de/rss.xml'
-tags = ['#holarse', '#linuxgames']
+tags = ['#holarse', '#linuxgaming', '#videogames']
 
 config = configparser.ConfigParser()
 config.read('config')
